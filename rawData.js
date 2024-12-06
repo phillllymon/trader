@@ -1,4 +1,7 @@
 const COSTdaily = [
+    {date: "Dec 6, 2024", open: 982.60, high: 997.71, low: 982.26, close: 992.61, vol: 1728117},
+    {date: "Dec 5, 2024", open: 986.66, high: 990.13, low: 978.20, close: 982.26, vol: 1981304},
+    {date: "Dec 4, 2024", open: 981.03, high: 991.10, low: 977.55, close: 990.92, vol: 1669988},
     {date: "Dec 3, 2024", open: 974.69, high: 983.00, low: 970.76, close: 982.15, vol: 1635014},
     {date: "Dec 2, 2024", open: 971.36, high: 976.50, low: 964.76, close: 975.00, vol: 1923810},
     {date: "Nov 29, 2024", open: 968.09, high: 973.27, low: 962.47, close: 971.88, vol: 1095900},
@@ -1261,6 +1264,9 @@ const COSTdaily = [
 ];
 
 const AMZNdaily = [
+    {date: "Dec 6, 2024", open: 220.79, high: 227.13, low: 220.60, close: 227.03, vol: 43683979},
+    {date: "Dec 5, 2024", open: 218.18, high: 222.15, low: 217.30, close: 220.55, vol: 38335521},
+    {date: "Dec 4, 2024", open: 215.98, high: 219.99, low: 215.78, close: 218.16, vol: 48571780},
     {date: "Dec 3, 2024", open: 210.31, high: 214.02, low: 209.65, close: 213.44, vol: 32072803},
     {date: "Dec 2, 2024", open: 209.96, high: 212.99, low: 209.51, close: 210.71, vol: 39163662},
     {date: "Nov 29, 2024", open: 205.83, high: 208.20, low: 204.59, close: 207.89, vol: 24892400},
@@ -2523,6 +2529,9 @@ const AMZNdaily = [
 ];
 
 const GBTCdaily = [
+    {date: "Dec 6, 2024", open: 78.94, high: 81.13, low: 78.37, close: 80.70, vol: 3963307},
+    {date: "Dec 5, 2024", open: 81.70, high: 82.44, low: 77.72, close: 78.69, vol: 7025686},
+    {date: "Dec 4, 2024", open: 76.10, high: 78.94, low: 75.17, close: 78.69, vol: 4870045},
     {date: "Dec 3, 2024", open: 74.82, high: 76.61, low: 74.33, close: 75.95, vol: 2128289},
     {date: "Dec 2, 2024", open: 76.21, high: 77.47, low: 74.96, close: 76.03, vol: 3039980},
     {date: "Nov 29, 2024", open: 77.37, high: 78.62, low: 77.09, close: 77.09, vol: 2967100},
@@ -3785,6 +3794,9 @@ const GBTCdaily = [
 ];
 
 const QQQdaily = [
+    {date: "Dec 6, 2024", open: 522.51, high: 526.72, low: 522.35, close: 526.48, vol: 22901437},
+    {date: "Dec 5, 2024", open: 523.35, high: 524.04, low: 521.42, close: 521.81, vol: 17077769},
+    {date: "Dec 4, 2024", open: 520.31, high: 523.51, low: 519.62, close: 523.26, vol: 25798061},
     {date: "Dec 3, 2024", open: 513.92, high: 517.14, low: 513.37, close: 516.87, vol: 17028253},
     {date: "Dec 2, 2024", open: 511.01, high: 516.26, low: 510.63, close: 515.29, vol: 24905606},
     {date: "Nov 29, 2024", open: 505.93, high: 510.34, low: 505.31, close: 509.74, vol: 15334000},
@@ -5047,6 +5059,9 @@ const QQQdaily = [
 ];
 
 const RIVNdaily = [
+    {date: "Dec 6, 2024", open: 12.61, high: 13.52, low: 12.50, close: 13.00, vol: 46609142},
+    {date: "Dec 5, 2024", open: 12.09, high: 12.85, low: 12.05, close: 12.34, vol: 43515343},
+    {date: "Dec 4, 2024", open: 11.83, high: 12.28, low: 11.71, close: 11.96, vol: 26659869},
     {date: "Dec 3, 2024", open: 11.68, high: 12.04, low: 11.55, close: 11.88, vol: 22600279},
     {date: "Dec 2, 2024", open: 12.27, high: 12.47, low: 11.52, close: 11.87, vol: 39617688},
     {date: "Nov 29, 2024", open: 12.23, high: 12.63, low: 11.93, close: 12.23, vol: 26168000},
@@ -5820,6 +5835,9 @@ const RIVNdaily = [
 ];
 
 const LUVdaily = [
+    {date: "Dec 6, 2024", open: 35.20, high: 35.25, low: 34.06, close: 34.18, vol: 5931630},
+    {date: "Dec 5, 2024", open: 35.46, high: 36.10, low: 34.40, close: 34.84, vol: 14061167},
+    {date: "Dec 4, 2024", open: 33.20, high: 34.15, low: 33.08, close: 34.15, vol: 6918782},
     {date: "Dec 3, 2024", open: 33.06, high: 33.65, low: 32.77, close: 32.98, vol: 7749404},
     {date: "Dec 2, 2024", open: 32.37, high: 33.39, low: 32.32, close: 33.00, vol: 9539978},
     {date: "Nov 29, 2024", open: 32.40, high: 32.61, low: 32.17, close: 32.36, vol: 2665100},
@@ -7082,6 +7100,9 @@ const LUVdaily = [
 ];
 
 const ABNBdaily = [
+    {date: "Dec 6, 2024", open: 137.75, high: 138.86, low: 136.56, close: 136.92, vol: 4152674},
+    {date: "Dec 5, 2024", open: 139.10, high: 140.38, low: 135.51, close: 136.32, vol: 5140789},
+    {date: "Dec 4, 2024", open: 136.69, high: 139.13, low: 134.85, close: 139.07, vol: 3472789},
     {date: "Dec 3, 2024", open: 136.97, high: 138.37, low: 135.38, close: 137.46, vol: 4679460},
     {date: "Dec 2, 2024", open: 136.43, high: 137.60, low: 135.69, close: 137.49, vol: 3285620},
     {date: "Nov 29, 2024", open: 138.53, high: 139.53, low: 135.83, close: 136.11, vol: 2664200},
@@ -8086,6 +8107,9 @@ const ABNBdaily = [
 ];
 
 const Fdaily = [
+    {date: "Dec 6, 2024", open: 10.51, high: 10.60, low: 10.42, close: 10.51, vol: 45083278},
+    {date: "Dec 5, 2024", open: 10.64, high: 10.69, low: 10.39, close: 10.44, vol: 63503388},
+    {date: "Dec 4, 2024", open: 10.85, high: 10.87, low: 10.59, close: 10.74, vol: 61462663},
     {date: "Dec 3, 2024", open: 10.99, high: 11.01, low: 10.82, close: 10.82, vol: 43815011},
     {date: "Dec 2, 2024", open: 11.22, high: 11.24, low: 10.96, close: 10.98, vol: 42492693},
     {date: "Nov 29, 2024", open: 11.16, high: 11.27, low: 11.12, close: 11.13, vol: 28935200},
@@ -9348,6 +9372,9 @@ const Fdaily = [
 ];
 
 const METAdaily = [
+    {date: "Dec 6, 2024", open: 610.10, high: 629.79, low: 608.53, close: 623.77, vol: 16945869},
+    {date: "Dec 5, 2024", open: 617.08, high: 619.90, low: 607.05, close: 608.93, vol: 7807856},
+    {date: "Dec 4, 2024", open: 611.88, high: 617.78, low: 605.10, close: 613.78, vol: 12843515},
     {date: "Dec 3, 2024", open: 595.00, high: 614.20, low: 591.25, close: 613.65, vol: 14749507},
     {date: "Dec 2, 2024", open: 577.34, high: 594.50, low: 575.57, close: 592.83, vol: 12334758},
     {date: "Nov 29, 2024", open: 569.00, high: 578.46, low: 566.90, close: 574.32, vol: 7130500},
@@ -10610,6 +10637,9 @@ const METAdaily = [
 ];
 
 const JBLUdaily = [
+    {date: "Dec 6, 2024", open: 6.54, high: 6.82, low: 6.45, close: 6.59, vol: 18081152},
+    {date: "Dec 5, 2024", open: 6.76, high: 6.80, low: 6.39, close: 6.42, vol: 22911603},
+    {date: "Dec 4, 2024", open: 6.33, high: 6.89, low: 6.27, close: 6.56, vol: 38313010},
     {date: "Dec 3, 2024", open: 6.24, high: 6.24, low: 6.02, close: 6.06, vol: 11948160},
     {date: "Dec 2, 2024", open: 6.01, high: 6.26, low: 5.95, close: 6.19, vol: 16790279},
     {date: "Nov 29, 2024", open: 5.97, high: 6.10, low: 5.95, close: 5.97, vol: 6055506},

@@ -1,3 +1,5 @@
+const { spreads } = require("../spreads.js");
+const defaultSpread = 0.0002;
 
 /*
 params: {
@@ -18,8 +20,8 @@ params: {
 }
 */
 
-function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false) { // this time params is an array
-
+function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false, minIncrease, minDir, minDirDir) { // this time params is an array
+    
     const dataList = unsortedDataList.map((ele) => {
         const eleToReturn = {};
         Object.keys(ele).forEach((key) => {
@@ -110,7 +112,7 @@ function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false) { /
                     }
                     for (let j = i - lookBack; j < i; j++) {
                         if (theseParams.useDir) {
-                            if (dataList[j + 1][priceType] > dataList[j][priceType]) {
+                            if (dataList[j + 1][priceType] > (minDir * dataList[j][priceType])) {
                                 arr.push(1);
                             } else if (dataList[j + 1][priceType] === dataList[j][priceType]) {
                                 arr.push(0.5);
@@ -119,7 +121,7 @@ function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false) { /
                             }
                         }
                         if (theseParams.useDirDir && j > i - lookBack) {
-                            if (dataList[j + 1][priceType] - dataList[j][priceType] > dataList[j][priceType] - dataList[j - 1][priceType]) {
+                            if (dataList[j + 1][priceType] - dataList[j][priceType] > minDirDir * (dataList[j][priceType] - dataList[j - 1][priceType])) {
                                 arr.push(1);
                             } else if (dataList[j + 1][priceType] - dataList[j][priceType] === dataList[j][priceType] - dataList[j - 1][priceType]) {
                                 arr.push(0.5);
@@ -194,6 +196,22 @@ function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false) { /
         let outputAnswer = lastEntry ? "no idea" : answerDiff > 0 ? 1 : answerDiff === 0 ? 0.5 : 0;
         // let outputAnswer = answerDiff < 0 ? 1 : answerDiff === 0 ? 0.5 : 0;
         // let outputAnswer = answerDiff > 0 ? 1 : 0;
+        if (paramsArr[0].answersWithSpread && !lastEntry) {
+            // console.log(spreads[paramsArr.sym]);
+            const spread = spreads[paramsArr.sym];
+            const price = dataList[i + 1][paramsArr[0].useForAnswer];
+            if (answerDiff < price * spread) {
+                outputAnswer = 0;
+            }
+        }
+        // TEMP - only return up if huge increase
+        if (!lastEntry) {
+            const price = dataList[i + 1][paramsArr[0].useForAnswer];
+            if (answerDiff < minIncrease * price) {
+                outputAnswer = 0;
+            }
+        }
+        // END TEMP
         if (paramsArr[0].normalizeOutput) {
             for (let j = i - lookBack; j < i; j++) {
                 const thisAnswer = dataList[j + 1][paramsArr[0].useForAnswer] - dataList[j][paramsArr[0].useForAnswer];
@@ -231,8 +249,7 @@ function createAnswersMulti(unsortedDataList, paramsArr, sortByTime = false) { /
     return answers;
 }
 
-function createAnswers(unsortedDataList, params, sortByTime = false) {
-
+function createAnswers(unsortedDataList, params, sortByTime = false, minIncrease, minDir, minDirDir) {
     const dataList = unsortedDataList.map((ele) => {
         const eleToReturn = {};
         Object.keys(ele).forEach((key) => {
@@ -331,7 +348,7 @@ function createAnswers(unsortedDataList, params, sortByTime = false) {
                 }
                 for (let j = i - lookBack; j < i; j++) {
                     if (theseParams.useDir) {
-                        if (dataList[j + 1][priceType] > dataList[j][priceType]) {
+                        if (dataList[j + 1][priceType] > minDir * dataList[j][priceType]) {
                             arr.push(1);
                         } else if (dataList[j + 1][priceType] === dataList[j][priceType]) {
                             arr.push(0.5);
@@ -340,7 +357,7 @@ function createAnswers(unsortedDataList, params, sortByTime = false) {
                         }
                     }
                     if (theseParams.useDirDir && j > i - lookBack) {
-                        if (dataList[j + 1][priceType] - dataList[j][priceType] > dataList[j][priceType] - dataList[j - 1][priceType]) {
+                        if (dataList[j + 1][priceType] - dataList[j][priceType] > minDirDir * (dataList[j][priceType] - dataList[j - 1][priceType])) {
                             arr.push(1);
                         } else if (dataList[j + 1][priceType] - dataList[j][priceType] === dataList[j][priceType] - dataList[j - 1][priceType]) {
                             arr.push(0.5);
@@ -407,6 +424,23 @@ function createAnswers(unsortedDataList, params, sortByTime = false) {
         let outputAnswer = answerDiff > 0 ? 1 : answerDiff === 0 ? 0.5 : 0;
         // let outputAnswer = answerDiff < 0 ? 1 : answerDiff === 0 ? 0.5 : 0;
         // let outputAnswer = answerDiff > 0 ? 1 : 0;
+        if (params.answersWithSpread && !lastOne) {
+            const spread = spreads[params.sym];
+            const price = dataList[i + 1][params.useForAnswer];
+            if (answerDiff < price * spread) {
+                outputAnswer = 0;
+            }
+        }
+
+        // TEMP - only return up if huge increase
+        if (!lastOne) {
+            const price = dataList[i + 1][params.useForAnswer];
+            if (answerDiff < minIncrease * price) {
+                outputAnswer = 0;
+            }
+        }
+        // END TEMP
+
         if (params.normalizeOutput) {
             for (let j = i - lookBack; j < i; j++) {
                 const thisAnswer = dataList[j + 1][params.useForAnswer] - dataList[j][params.useForAnswer];

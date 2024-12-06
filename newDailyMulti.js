@@ -33,6 +33,43 @@ const {
     NFLXdaily,  // 5670     0.0008
     DISdaily    // 1258     0.00009
 } = require("./rawDataCont.js");
+const {
+    IWMdaily,
+    SPYdaily,
+    XLYdaily,
+    NVDAdaily
+} = require("./rawDataCont2.js");
+
+const {
+    ABEVdaily,
+    NOKdaily,
+    BBDdaily,
+    PLUGdaily,
+    DNNdaily,
+    QBTSdaily,
+    INDIdaily,
+    NVTSdaily,
+    BBAIdaily,
+    CHPTdaily,
+    JMIAdaily,
+    KULRdaily,
+    HRTXdaily,
+    HMBLdaily,
+    MIGIdaily,
+    SVMHdaily,
+    GWAVdaily,
+    CDIOdaily,
+    DPLSdaily,
+    RDARdaily,
+    ENZCdaily,
+    FUNRdaily,
+    MTEMdaily,
+    PRFXdaily,
+    PBMdaily,
+    ABQQdaily,
+    BCDSdaily,
+    PSYCdaily,
+} = require("./rawPennies.js");
 
 // ----- params -----
 const stocksToUse = [
@@ -57,22 +94,60 @@ const stocksToUse = [
     [BAdaily, "BA"],
     [BYRNdaily, "BYRN"],
     [NFLXdaily, "NFLX"],
-    [DISdaily, "DIS"]
+    [DISdaily, "DIS"],
+    [IWMdaily, "IWM"],
+    [SPYdaily, "SPY"],
+    [XLYdaily, "XLY"],
+    [NVDAdaily, "NVDA"],
+    // ------- pennies below
+    // [ABEVdaily, "ABEV"],
+    // [NOKdaily, "NOK"],
+    // [BBDdaily, "BBD"],
+    // [PLUGdaily, "PLUG"],
+    // [DNNdaily, "DNN"],
+    // [QBTSdaily, "QBTS"],
+    // [INDIdaily, "INDI"],
+    // [NVTSdaily, "NVTS"],
+    // [BBAIdaily, "BBAI"],
+    // [CHPTdaily, "CHPT"],
+    // [JMIAdaily, "JMIA"],
+    // [KULRdaily, "KULR"],
+    // [HRTXdaily, "HRTX"],
+    // // [HMBLdaily, "HMBL"],
+    // [MIGIdaily, "MIGI"],
+    // [SVMHdaily, "SVMH"],
+    // // [GWAVdaily, "GWAV"],
+    // // [CDIOdaily, "CDIO"],
+    // // [DPLSdaily, "DPLS"],
+    // // [RDARdaily, "RDAR"],
+    // // [ENZCdaily, "ENZC"],
+    // // [FUNRdaily, "FUNR"],
+    // [MTEMdaily, "MTEM"],
+    // [PRFXdaily, "PRFX"],
+    // [PBMdaily, "PBM"],
+    // // [ABQQdaily, "ABQQ"],
+    // // [BCDSdaily, "BCDS"],
+    // // [PSYCdaily, "PSYC"],
 ];
-const testLength = 60;
+// reliable 1 day with regular stocks: minIncrease 0 minDir 1 minDirDir 1 lookBack 4 close dir vol dirDir train last 500
+const testLength = 220;
 const testSegFromEnd = 1;
+const dataCollapse = 1; // causes lots of errors - prices missing? no sure
 const numNets = 1;
 const retrainInterval = 1;
 const maxTrainLength = 500; // set to false to not use this at all
 const keepTrainLength = true;
 const tradeInterval = 1;
 const buyThreshold = 0.5;
-const bestFoundStart = 0;
+const bestFoundStart = 1;
+const minIncrease = 0;    // 0 means any increase
+const minDir = 1;           // 1 means any increase
+const minDirDir = 1;        // 1 means any increase
 const useFewestNegatives = false;
 const upFactor = 1;
-const buyTopNum = 2;
+const buyTopNum = 1;
 const useSimpleNet = true;
-const spreadFraction = 0.0002;
+const answersWithSpread = false;
 const useForAnswer = "close";
 // const multiTrainingParams = false;
 const multiTrainingParams = [
@@ -81,56 +156,16 @@ const multiTrainingParams = [
         useForAnswer: "close",
         normalizeOutput: false,
         sortByTime: false,
+        answersWithSpread: answersWithSpread,
         // --- ^first set^ ---
         lookBack: 4,
-        numsToUse: {
-            "vol": ["dir"],
-            "high": ["dir"]
-        },
-        normalizeOutput: false,
-        startTraining: 0,
-        normalizeFactor: 1.5
-    },
-    {
-        // --- make sure these are in first set
-        useForAnswer: "close",
-        normalizeOutput: false,
-        sortByTime: false,
-        // --- ^first set^ ---
-        lookBack: 4,
+        // numsToUse: {
+        //     "vol": ["dir"],
+        //     "high": ["dir"]
+        // },
         numsToUse: {
             "close": ["dir"],
-            "vol": ["dirDir"],
-        },
-        normalizeOutput: false,
-        startTraining: 0,
-        normalizeFactor: 1.5
-    },
-    {
-        // --- make sure these are in first set
-        useForAnswer: "close",
-        normalizeOutput: false,
-        sortByTime: false,
-        // --- ^first set^ ---
-        lookBack: 4,
-        numsToUse: {
-            "close": ["dir"],
-        },
-        normalizeOutput: false,
-        startTraining: 0,
-        normalizeFactor: 1.5
-    },
-    {
-        // --- make sure these are in first set
-        useForAnswer: "close",
-        normalizeOutput: false,
-        sortByTime: false,
-        // --- ^first set^ ---
-        lookBack: 4,
-        numsToUse: {
-            "close": ["dir"],
-            "vol": ["dir"],
-            "vol": ["dirDir"],
+            "vol": ["dirDir"]
         },
         normalizeOutput: false,
         startTraining: 0,
@@ -138,10 +173,9 @@ const multiTrainingParams = [
     },
 ];
 const defaultTrainingParams = {
-    lookBack: 4,
+    lookBack: 5,
     numsToUse: {
         "close": ["dir"],
-        "vol": ["dir"],
         "vol": ["dirDir"],
         // "open": ["dir"],
         // "high": ["dir"],
@@ -150,7 +184,8 @@ const defaultTrainingParams = {
     normalizeOutput: false,
     startTraining: 0,
     normalizeFactor: 1.5,
-    sortByTime: false
+    sortByTime: false,
+    answersWithSpread: answersWithSpread
 };
 const trainingParams = {
     // COST: {
@@ -216,7 +251,7 @@ syms.forEach((sym, i) => {
             return -1;
         }
     });
-    dataToUse[sym] = fillInBlanks(rawData);
+    dataToUse[sym] = fillInBlanks(rawData, dataCollapse);
 });
 
 const priceLists = {};
@@ -232,10 +267,13 @@ syms.forEach((sym) => {
         lookBack: answerParams.lookBack,
         normalizeFactor: answerParams.normalizeFactor,
         normalizeOutput: answerParams.normalizeOutput,
-        useForAnswer: useForAnswer
+        useForAnswer: useForAnswer,
+        sym: sym,
+        answersWithSpread: answersWithSpread
     };
     if (multiTrainingParams) {
         paramsToUse = multiTrainingParams;
+        multiTrainingParams.sym = sym;
     }
     if (multiTrainingParams) {
         multiTrainingParams.forEach((paramSet) => {
@@ -269,13 +307,16 @@ syms.forEach((sym) => {
         });
     }
     if (multiTrainingParams) {
-        answerLists[sym] = createAnswersMulti(dataToUse[sym], paramsToUse, false);
+        answerLists[sym] = createAnswersMulti(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
         priceLists[sym] = createPriceListMulti(dataToUse[sym], paramsToUse);
     } else {
-        answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, false);
+        answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
         priceLists[sym] = createPriceList(dataToUse[sym], paramsToUse);
     }
 });
+
+// console.log(priceLists["ABEV"].slice(priceLists["ABEV"].length - 5, priceLists["ABEV"].length));
+// throw("fit");
 
 
 
@@ -325,10 +366,10 @@ syms.forEach((sym) => {
     testPriceLists[sym] = priceLists[sym].slice(endTraining, answerList.length - (testLength * (testSegFromEnd - 1)));
 });
 
-syms.forEach((sym) => {
-    console.log(sym);
-    console.log(testPriceLists[sym].slice(26, 30));
-});
+// syms.forEach((sym) => {
+//     console.log(sym);
+//     console.log(testPriceLists[sym]);
+// });
 
 // console.log(testAnswerLists["AMZN"].slice(50, 55));
 // throw("fit");
@@ -336,7 +377,6 @@ syms.forEach((sym) => {
 runMulti(testAnswerLists, testPriceLists, trainingLists, nets, {
     retrainInterval: retrainInterval,
     buyThreshold: buyThreshold,
-    spreadFraction: spreadFraction,
     useSimpleNet: useSimpleNet,
     tradeInterval: tradeInterval,
     bestFoundStart: bestFoundStart,

@@ -1,4 +1,4 @@
-function fillInBlanks(dataArr) {
+function fillInBlanks(dataArr, collapseN = 1) {
     const answer = [];
     let lastClose = Number.parseFloat(dataArr[0].close);
     let lastOpen = Number.parseFloat(dataArr[0].open);
@@ -42,7 +42,8 @@ function fillInBlanks(dataArr) {
         lastLow = newEntry.low;
         answer.push(newEntry);
     }
-    return answer;
+    // return answer;
+    return collapse(answer, collapseN, true);
 };
 
 function fillInBlanksMinutely(dataArr, collapseN = 1) {
@@ -102,7 +103,7 @@ function fillInBlanksMinutely(dataArr, collapseN = 1) {
     return collapse(answer, collapseN);
 }
 
-function collapse(arr, n) {
+function collapse(arr, n, useClose = false) {
     // return arr;
     const answer = [];
     
@@ -111,27 +112,50 @@ function collapse(arr, n) {
         const startIdx = i * n;
         const theseEles = [];
         for (let j = 0; j < n; j++) {
-            theseEles.push(arr[startIdx + j]);
+            if (arr[startIdx + j]) {
+                theseEles.push(arr[startIdx + j]);
+            }
         }
 
+        let close;
+        let date;
+        let price;
+        let time;
         const open = theseEles[0].open;
-        const price = theseEles[theseEles.length - 1].price;
-        const time = theseEles[theseEles.length - 1].time;
+        if (useClose) {
+            close = theseEles[theseEles.length - 1].close;
+            date = theseEles[theseEles.length - 1].date;
+        } else {
+            price = theseEles[theseEles.length - 1].price;
+            time = theseEles[theseEles.length - 1].time;
+        }
         const high = Math.max(...theseEles.map(ele => ele.high));
         const low = Math.min(...theseEles.map(ele => ele.low));
         let vol = 0;
         theseEles.forEach((ele) => {
             vol += ele.vol;
         });
+        if (useClose) {
+            answer.push({
+                date: date,
+                close: close,
+                vol: vol,
+                open: open,
+                high: high,
+                low: low
+            });
+        } else {
 
-        answer.push({
-            time: time,
-            price: price,
-            vol: vol,
-            open: open,
-            high: high,
-            low: low
-        });
+            answer.push({
+                time: time,
+                price: price,
+                vol: vol,
+                open: open,
+                high: high,
+                low: low
+            });
+        }
+
     }
     
     return answer;

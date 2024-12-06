@@ -104,7 +104,7 @@ class TallyNetSet {
         this.train(data);
     }
 
-    run(data, answerDiff) {
+    run(data, answerDiff, defaultToKeep = false) {
 
         // RETURN CORRECT ANSWER
         // if (answerDiff > 0) {
@@ -146,10 +146,14 @@ class TallyNetSet {
                 // return [1, this.table[str].totalGain];
                 return [1, howSure];
             } else if (this.table[str].up < this.table[str].down) {
-                return [0];
+                let howSure = 1000;
+                if (this.table[str].up > 0) {
+                    howSure = this.table[str].down / this.table[str].up;
+                }
+                return [0, howSure];
             } else {
                 // return [0.5];
-                return [0];
+                return defaultToKeep ? [1] : [0];
             }
         }
         this.noData += 1;

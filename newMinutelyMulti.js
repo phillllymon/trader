@@ -21,27 +21,55 @@ const {
     dec2
 } = require("./rawDataMinutely.js");
 const {
-    dec3
+    dec3,
+    dec6
 } = require("./rawDataMinutelyCont.js");
 
+// new days!!! (low spread)
+const { dec4new } = require("./dec4new");
+const { dec5new } = require("./dec5new");
+const { dec6new } = require("./dec6new");
+
 const daysToUse = [
-    [nov11, "Nov11"],
-    [nov12, "Nov12"],
-    [nov13, "Nov13"],
-    [nov14, "Nov14"],
-    [nov15, "Nov15"],
-    [nov18, "Nov18"],
-    [nov22, "Nov22"],   // first day with open, high, low
-    [nov25, "Nov25"],
-    [nov26, "Nov26"],
-    [nov27, "Nov27"],
-    [dec2, "dec2"],
-    [dec3, "dec3"]
+    // [nov11, "Nov11"],
+    // [nov12, "Nov12"],
+    // [nov13, "Nov13"],
+    // [nov14, "Nov14"],
+    // [nov15, "Nov15"],
+    // [nov18, "Nov18"],
+    // [nov22, "Nov22"],   // first day with open, high, low
+    // [nov25, "Nov25"],
+    // [nov26, "Nov26"],
+    // [nov27, "Nov27"],
+    // [dec2, "dec2"],
+    // [dec3, "dec3"],  
+    // [dec6, "dec6"],  
+    [dec4new, "dec4"],      // first day with low spread stocks
+    [dec5new, "dec5new"],
+    [dec6new, "dec6new"],
 ];
 
 // TEMP - preprogram table
-const table = {
-    
+const table = {};
+const tables = {
+    COST: {},
+    AMZN: {},
+    GBTC: {},
+    QQQ: {},
+    RIVN: {},
+    LUV: {},
+    ABNB: {},
+    F: {},
+
+    AAPL: {},
+    IWM: {},
+    QQQ: {},
+    SPY: {},
+    GLD: {},
+    IWM: {},
+    TSLA: {},
+    XLY: {},
+    DIS: {}
 };
 // END TEMP
 
@@ -64,39 +92,51 @@ console.log("--------------------------------");
 function runDay(dayToUse) {
     // ----- params -----
     const stocksToUse = [
-        [dayToUse.COST, "COST"], 
-        [dayToUse.AMZN, "AMZN"],
-        [dayToUse.GBTC, "GBTC"],
-        [dayToUse.QQQ, "QQQ"],
-        [dayToUse.RIVN, "RIVN"],
-        [dayToUse.LUV, "LUV"],
-        [dayToUse.ABNB, "ABNB"],
-        [dayToUse.F, "F"],
+        // [dayToUse.COST, "COST"],    // 0.0007
+        // [dayToUse.AMZN, "AMZN"],    // 0.00005
+        // [dayToUse.GBTC, "GBTC"],    // 0.0001
+        // [dayToUse.QQQ, "QQQ"],      // 0.00004
+        // [dayToUse.RIVN, "RIVN"],    // 0.0009
+        // [dayToUse.LUV, "LUV"],      // 0.0003
+        // [dayToUse.ABNB, "ABNB"],    // 0.0004
+        // [dayToUse.F, "F"],          // 0.0009
         // [dayToUse.UPRO, "UPRO"],
-        // [dayToUse.TQQQ, "TQQQ"]
+        // [dayToUse.TQQQ, "TQQQ"],
+
+        // ----------------- new stocks (low spread)
+        [dayToUse.QQQ, "QQQ"],      // 0.000019
+        [dayToUse.SPY, "SPY"],      // 0.000032
+        [dayToUse.GLD, "GLD"],      // 0.00004
+        [dayToUse.AAPL, "AAPL"],    // 0.000041
+        [dayToUse.IWM, "IWM"],      // 0.000041
+        [dayToUse.AMZN, "AMZN"],    // 0.00005
+        [dayToUse.TSLA, "TSLA"],    // 0.000056
+        [dayToUse.XLY, "XLY"],      // 0.000068
+        [dayToUse.DIS, "DIS"]       // 0.00009
     ];
     const testLength = 380;
-    const dataCollapse = 1;
+    const dataCollapse = 5;
     const testSegFromEnd = 1;
     const numNets = 1;
     const retrainInterval = 1;
     const tradeInterval = 1;
     const buyThreshold = 0.5;
+    const answersWithSpread = false;
     const useSimpleNet = true;
     const greaterFactor = 1;
-    const spreadFraction = 0.0002;
     const useForAnswer = "price";
     const useFewestNegatives = false;
-    const bestFoundStart = 0;
+    const bestFoundStart = 1;
+    const minIncrease = 0.0000;  // 0 means any increase
+    const minDir = 1.0;         // 1 means any increase
+    const minDirDir = 1.5;        // 1 means any increase
     const buyTopNum = 1;
     const keepTrainLength = false;
     const defaultTrainingParams = {
         lookBack: 2,
         numsToUse: {
             "price": ["dir"],
-            // "price": ["dirDir"],
-            "vol": ["dir"],
-            // "vol": ["dirDir"],
+            "vol": ["dirDir"],
             // "open": ["dirDir"],
             // "high": ["actual"],
             // "high": ["dir"],
@@ -172,6 +212,8 @@ function runDay(dayToUse) {
             normalizeFactor: answerParams.normalizeFactor,
             normalizeOutput: answerParams.normalizeOutput,
             useForAnswer: useForAnswer,
+            answersWithSpread: answersWithSpread,
+            sym: sym,
             sortByTime: true
         };
         ["price", "vol", "open", "high", "low"].forEach((numType) => {
@@ -187,7 +229,7 @@ function runDay(dayToUse) {
                 }
             }
         });
-        answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, true);
+        answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, true, minIncrease, minDir, minDirDir);
         priceLists[sym] = createPriceList(dataToUse[sym], paramsToUse);
     });
 
@@ -212,11 +254,18 @@ function runDay(dayToUse) {
         const testLengthToUse = Math.floor(testLength / dataCollapse);
         const endTraining = answerList.length - (testLengthToUse * testSegFromEnd);
         trainingLists[sym] = answerList.slice(startTraining, endTraining);
-        nets[sym] = useSimpleNet ? new TallyNetSet(numNets, greaterFactor, table, useFewestNegatives) : new NetSet(numNets);
-        nets[sym].train(trainingLists[sym]);
+        // nets[sym] = useSimpleNet ? new TallyNetSet(numNets, greaterFactor, {}, useFewestNegatives) : new NetSet(numNets);
+        // nets[sym] = useSimpleNet ? new TallyNetSet(numNets, greaterFactor, table, useFewestNegatives) : new NetSet(numNets);
+        nets[sym] = useSimpleNet ? new TallyNetSet(numNets, greaterFactor, tables[sym], useFewestNegatives) : new NetSet(numNets);
+        
+        // nets[sym].train(trainingLists[sym]);
 
         testAnswerLists[sym] = answerLists[sym].slice(endTraining, answerList.length - (testLengthToUse * (testSegFromEnd - 1)));
         testPriceLists[sym] = priceLists[sym].slice(endTraining, answerList.length - (testLengthToUse * (testSegFromEnd - 1)));
+    });
+
+    syms.forEach((sym) => {
+        nets[sym].train(trainingLists[sym]);
     });
 
     // console.log(testPriceLists["AMZN"].length);
@@ -225,7 +274,6 @@ function runDay(dayToUse) {
     return runMulti(testAnswerLists, testPriceLists, trainingLists, nets, {
         retrainInterval: retrainInterval,
         buyThreshold: buyThreshold,
-        spreadFraction: spreadFraction,
         useSimpleNet: useSimpleNet,
         tradeInterval: tradeInterval,
         bestFoundStart: bestFoundStart,
