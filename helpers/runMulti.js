@@ -16,13 +16,13 @@ function runMulti(testAnswerLists, testPriceLists, trainingLists, nets, params) 
     const aiAmts = [];
     const heldStocks = [];
 
-    console.log("If you start with $100:");
+    // console.log("If you start with $100:");
     syms.forEach((sym) => {
         const startPrice = testPriceLists[sym][0];
         const endPrice = testPriceLists[sym][testPriceLists[sym].length - 1];
         const ratio = 1.0 * endPrice.price / startPrice.price;
         const endMoney = 100 * ratio;
-        console.log(`keep ${sym} end with: ${formatMoney(endMoney)}`);
+        // console.log(`keep ${sym} end with: ${formatMoney(endMoney)}`);
         keepValues[sym] = [100.0 / syms.length];
     });
 
@@ -115,7 +115,10 @@ function runMulti(testAnswerLists, testPriceLists, trainingLists, nets, params) 
                 // if (canSellAtLoss || nothingOwned || currentOwnPrice > buyPrices[j]) { // never sell at loss
                     canSellAtLoss = false;
 
-                    own[j] = -1;
+                    // if (Math.random() > 0.5) {
+                        own[j] = -1;
+                    // }
+
                     let bestFound = buyThreshold;
                     if (useSimpleNet) {
                         if (useFewestNegatives) {
@@ -163,8 +166,12 @@ function runMulti(testAnswerLists, testPriceLists, trainingLists, nets, params) 
                                 if (howSure > bestFound && !own.slice(0, j).includes(idx)) {
                                 // if (howSure > bestFound && (howSure === 1000 || (howSure > 1.0 && howSure < 3))) {
                                     bestFound = howSure;
-                                    own[j] = idx;
-                                    buyPrices[j] = testPriceLists[syms[own[j]]][i].price;
+                                    //////////////////////////////////////// simulate limit price of last sale, assume many just won't work
+                                    // if (Math.random() > 0.5 && own[j] === -1) {
+                                        own[j] = idx;
+                                        buyPrices[j] = testPriceLists[syms[own[j]]][i].price;
+                                    // }
+                                    ////////////////////////////////////////
                                     if (Math.round(prediction) === Math.round(inputToUse.output[0])) {
                                         thisRight = true;
                                     } else {
@@ -237,9 +244,9 @@ function runMulti(testAnswerLists, testPriceLists, trainingLists, nets, params) 
             console.log("ok now last really");
             const thisAnswerEntry = testAnswerLists[syms[0]][i];
             console.log(thisAnswerEntry.date);
-            // console.log(thisAnswerEntry);
+            console.log(thisAnswerEntry);
             console.log("hold: " + syms[own[0]]);
-            // console.log(own);
+            console.log(own);
         }
 
     }
@@ -289,22 +296,22 @@ function runMulti(testAnswerLists, testPriceLists, trainingLists, nets, params) 
     console.log(`Ending amt with ai: ${formatMoney(amt)}`);
     console.log("--------------------------");
     console.log("trades: " + trades + ", " + amt + " -> " + formatMoney(realEndAmt));
-    console.log("");
-    console.log("ups: " + ups);
-    console.log("downs: " + downs);
-    console.log("guess ratio: " + correct / wrong);
-    console.log("correct: " + correct);
-    console.log("wrong: " + wrong);
-    console.log("--------------------------");
-    console.log("UP ONLY guess ratio: " + correctUp / wrongUp);
-    console.log("correct up: " + correctUp);
-    console.log("wrong up: " + wrongUp);
+    // console.log("");
+    // console.log("ups: " + ups);
+    // console.log("downs: " + downs);
+    // console.log("guess ratio: " + correct / wrong);
+    // console.log("correct: " + correct);
+    // console.log("wrong: " + wrong);
+    // console.log("--------------------------");
+    // console.log("UP ONLY guess ratio: " + correctUp / wrongUp);
+    // console.log("correct up: " + correctUp);
+    // console.log("wrong up: " + wrongUp);
     console.log("used up correct: " + usedUpRight);
     console.log("used up wrong: " + usedUpWrong);
     console.log("used up ratio: " + usedUpRight / usedUpWrong);
-    console.log(frequencyTable(flattenOneLevel(heldStocks).map(ele => syms[ele] ? syms[ele] : "KEEP")));
-    console.log(stockData);
-    // console.log(heldStocks);
+    // console.log(frequencyTable(flattenOneLevel(heldStocks).map(ele => syms[ele] ? syms[ele] : "KEEP")));
+    // console.log(stockData);
+    console.log(heldStocks.map(idx => syms[idx]).slice(heldStocks.length - 6, heldStocks.length));
     // syms.forEach((sym) => {
     //     console.log(nets[sym].answerData);
     // });

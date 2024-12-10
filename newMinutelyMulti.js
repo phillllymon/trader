@@ -5,7 +5,7 @@ const {
 const { fillInBlanksMinutely } = require("./helpers/fillInBlanks.js");
 const { createAnswers } = require("./helpers/createAnswers.js");
 const { createPriceList } = require("./helpers/createPriceList.js");
-const { formatMoney } = require("./helpers/util.js");
+const { formatMoney, getPerms } = require("./helpers/util.js");
 const { runMulti } = require("./helpers/runMulti.js");
 const {
     nov11,
@@ -22,7 +22,8 @@ const {
 } = require("./rawDataMinutely.js");
 const {
     dec3,
-    dec6
+    dec6,
+    dec9
 } = require("./rawDataMinutelyCont.js");
 
 // new days!!! (low spread)
@@ -30,28 +31,47 @@ const { dec4new } = require("./dec4new");
 const { dec5new } = require("./dec5new");
 const { dec6new } = require("./dec6new");
 
+const { formatData } = require("./dataFromAlpaca.js");
+
 const daysToUse = [
-    // [nov11, "Nov11"],
-    // [nov12, "Nov12"],
-    // [nov13, "Nov13"],
-    // [nov14, "Nov14"],
-    // [nov15, "Nov15"],
-    // [nov18, "Nov18"],
-    // [nov22, "Nov22"],   // first day with open, high, low
-    // [nov25, "Nov25"],
-    // [nov26, "Nov26"],
-    // [nov27, "Nov27"],
-    // [dec2, "dec2"],
-    // [dec3, "dec3"],  
-    // [dec6, "dec6"],  
-    [dec4new, "dec4"],      // first day with low spread stocks
-    [dec5new, "dec5new"],
-    [dec6new, "dec6new"],
+    [nov11, "Nov11"],
+    [nov12, "Nov12"],
+    [nov13, "Nov13"],
+    [nov14, "Nov14"],
+    [nov15, "Nov15"],
+    [nov18, "Nov18"],
+    [nov22, "Nov22"],   // first day with open, high, low
+    [nov25, "Nov25"],
+    [nov26, "Nov26"],
+    [nov27, "Nov27"],
+    [dec2, "dec2"],
+    [dec3, "dec3"],  
+    [dec6, "dec6"],
+    [dec9, "dec9"],  
+    // [dec4new, "dec4new"],      // first day with low spread stocks
+    // [dec5new, "dec5new"],
+    // [dec6new, "dec6new"],
+    // [formatData("nov18"), "nov18", 1],
+    // [formatData("nov19"), "nov19", 1],
+    // [formatData("nov20"), "nov20", 1],
+    // [formatData("nov21"), "nov21", 1],
+    // [formatData("nov22"), "nov22", 1],
+    // [formatData("nov25"), "nov25", 1],
+    // [formatData("nov26"), "nov26", 1],
+    // [formatData("nov27"), "nov27", 1],
+    // [formatData("dec2"), "dec2", 1],
+    // [formatData("dec3"), "dec3", 1],
+    // [dec4new, "dec4"],
+    // [dec5new, "dec5"],
+    // [dec6new, "dec6"],
 ];
 
-// TEMP - preprogram table
+
+
+
+// share table
 const table = {};
-const tables = {
+let tables = {
     COST: {},
     AMZN: {},
     GBTC: {},
@@ -65,17 +85,110 @@ const tables = {
     IWM: {},
     QQQ: {},
     SPY: {},
+    // AMZN: {}, already above
     GLD: {},
-    IWM: {},
     TSLA: {},
     XLY: {},
     DIS: {}
 };
-// END TEMP
 
+const perms = getPerms(5, [
+    [],
+    ["dir"],
+    ["dirDir"],
+    ["dir", "dirDir"]
+]);
+console.log(perms[831]);
+
+const overallTest = false;
+if (overallTest) {
+
+// OVERALL TEST -----------------------------------
+const overallResults = [];
+perms.forEach((perm, permIdx) => {
+    console.log("checking config " + permIdx + " / " + perms.length);
+    for (let n = 1; n < 5; n++) {
+        const constructParams = {
+            lookBack: n,
+            numsToUse: {
+                "price": perm[0],
+                "vol": perm[1],
+                "open": perm[2],
+                "high": perm[3],
+                "low": perm[4]
+            },
+            normalizeOutput: false,
+            startTraining: 0,
+            normalizeFactor: 1.5
+        }
+        const theseResults = [];
+        tables = {
+            COST: {},
+            AMZN: {},
+            GBTC: {},
+            QQQ: {},
+            RIVN: {},
+            LUV: {},
+            ABNB: {},
+            F: {},
+        
+            AAPL: {},
+            IWM: {},
+            QQQ: {},
+            SPY: {},
+            // AMZN: {}, already above
+            GLD: {},
+            TSLA: {},
+            XLY: {},
+            DIS: {}
+        };
+        daysToUse.forEach((dayPair) => {
+            let length = 0;
+            Object.keys(constructParams.numsToUse).forEach((key) => {
+                length += constructParams.numsToUse[key].length;
+            });
+            if (length > 0) {
+                theseResults.push(runDay(dayPair[0], dayPair[2], constructParams));
+            }
+        });
+        let ave = 0;
+        let noSpreadAve = 0;
+        theseResults.forEach((result) => {
+            ave += result[1];
+            noSpreadAve += result[0];
+        });
+        ave /= theseResults.length;
+        noSpreadAve /= theseResults.length;
+        if (ave > 100.2) {
+            console.log(ave);
+        }
+        overallResults.push([`${n}-${permIdx}`, ave, noSpreadAve]);
+    }
+});
+let noSpread = 0;
+let highest = 0;
+let code = "";
+overallResults.forEach((resultPair) => {
+    if (resultPair[1] > highest) {
+        highest = resultPair[1];
+        noSpread = resultPair[2];
+        code = resultPair[0];
+    }
+});
+console.log("DONE!");
+console.log("----------------------------");
+console.log("highest ave: " + formatMoney(highest));
+console.log("no spread: " + formatMoney(noSpread));
+console.log("highest code: " + code);
+console.log("----------------------------");
+// OVERALL TEST ^---------------------------------^
+
+} else {
+
+// main ------------- main
 const results = [];
 daysToUse.forEach((dayPair) => {
-    results.push(runDay(dayPair[0]));
+    results.push(runDay(dayPair[0], dayPair[2]));
 });
 let ave = 0;
 let realAve = 0;
@@ -87,35 +200,37 @@ results.forEach((result, i) => {
 console.log("--------------------------------");
 console.log(`AVE: ${formatMoney(ave / results.length)} -> ${formatMoney(realAve / results.length)}`);
 console.log("--------------------------------");
+// -------- end main --------
 
+}
 
-function runDay(dayToUse) {
+function runDay(dayToUse, collapseN, useParams) {
     // ----- params -----
     const stocksToUse = [
-        // [dayToUse.COST, "COST"],    // 0.0007
-        // [dayToUse.AMZN, "AMZN"],    // 0.00005
-        // [dayToUse.GBTC, "GBTC"],    // 0.0001
-        // [dayToUse.QQQ, "QQQ"],      // 0.00004
-        // [dayToUse.RIVN, "RIVN"],    // 0.0009
-        // [dayToUse.LUV, "LUV"],      // 0.0003
-        // [dayToUse.ABNB, "ABNB"],    // 0.0004
-        // [dayToUse.F, "F"],          // 0.0009
+        [dayToUse.COST, "COST"],    // 0.0007
+        [dayToUse.AMZN, "AMZN"],    // 0.00005
+        [dayToUse.GBTC, "GBTC"],    // 0.0001
+        [dayToUse.QQQ, "QQQ"],      // 0.00004
+        [dayToUse.RIVN, "RIVN"],    // 0.0009
+        [dayToUse.LUV, "LUV"],      // 0.0003
+        [dayToUse.ABNB, "ABNB"],    // 0.0004
+        [dayToUse.F, "F"],          // 0.0009
         // [dayToUse.UPRO, "UPRO"],
         // [dayToUse.TQQQ, "TQQQ"],
 
         // ----------------- new stocks (low spread)
-        [dayToUse.QQQ, "QQQ"],      // 0.000019
-        [dayToUse.SPY, "SPY"],      // 0.000032
-        [dayToUse.GLD, "GLD"],      // 0.00004
-        [dayToUse.AAPL, "AAPL"],    // 0.000041
-        [dayToUse.IWM, "IWM"],      // 0.000041
-        [dayToUse.AMZN, "AMZN"],    // 0.00005
-        [dayToUse.TSLA, "TSLA"],    // 0.000056
-        [dayToUse.XLY, "XLY"],      // 0.000068
-        [dayToUse.DIS, "DIS"]       // 0.00009
+        // [dayToUse.QQQ, "QQQ"],      // 0.000019
+        // [dayToUse.SPY, "SPY"],      // 0.000032
+        // [dayToUse.GLD, "GLD"],      // 0.00004
+        // [dayToUse.AAPL, "AAPL"],    // 0.000041
+        // [dayToUse.IWM, "IWM"],      // 0.000041
+        // [dayToUse.AMZN, "AMZN"],    // 0.00005
+        // [dayToUse.TSLA, "TSLA"],    // 0.000056
+        // [dayToUse.XLY, "XLY"],      // 0.000068
+        // [dayToUse.DIS, "DIS"]       // 0.00009
     ];
     const testLength = 380;
-    const dataCollapse = 5;
+    const dataCollapse = 1;
     const testSegFromEnd = 1;
     const numNets = 1;
     const retrainInterval = 1;
@@ -127,24 +242,26 @@ function runDay(dayToUse) {
     const useForAnswer = "price";
     const useFewestNegatives = false;
     const bestFoundStart = 1;
-    const minIncrease = 0.0000;  // 0 means any increase
-    const minDir = 1.0;         // 1 means any increase
-    const minDirDir = 1.5;        // 1 means any increase
+    const minIncrease = 0.00;  // 0 means any increase
+    const minDir = 1;         // 1 means any increase
+    const minDirDir = 40;        // 1 means any increase
     const buyTopNum = 1;
     const keepTrainLength = false;
-    const defaultTrainingParams = {
+    const defaultTrainingParams = overallTest ? useParams : {
+        // ------ good with collapse 5
         lookBack: 2,
         numsToUse: {
             "price": ["dir"],
             "vol": ["dirDir"],
-            // "open": ["dirDir"],
-            // "high": ["actual"],
-            // "high": ["dir"],
-            // "high": ["dirDir"],
-            // "low": ["actual"],
-            // "low": ["dir"],
-            // "low": ["dirDir"]
         },
+        // lookBack: 3,
+        // numsToUse: {
+        //     "price": ["dir", "dirDir"],
+        //     "vol": [],
+        //     "open": ["dir", "dirDir"],
+        //     "high": ["dir", "dirDir"],
+        //     "low": ["dir", "dirDir"]
+        // },
         normalizeOutput: false,
         startTraining: 0,
         normalizeFactor: 1.5
@@ -194,7 +311,8 @@ function runDay(dayToUse) {
         //         return -1;
         //     }
         // });
-        dataToUse[sym] = fillInBlanksMinutely(rawData, dataCollapse);
+        dataToUse[sym] = fillInBlanksMinutely(rawData, collapseN ? collapseN : dataCollapse);
+        
     });
 
     // console.log(dataToUse["COST"].slice(0, 4));

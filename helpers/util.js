@@ -85,7 +85,23 @@ function getSkeleton(arrs, n, smash = false) {
     return answer;
 }
 
+function getPerms(spots, things) {
+    if (spots === 1) {
+        return things.map(ele => [ele]);
+    }
+    const fewerPerms = getPerms(spots - 1, things);
+    const answer = [];
+    fewerPerms.forEach((perm) => {
+        things.forEach((thing) => {
+            const permToUse = perm.map(ele => ele);
+            answer.push([...permToUse, thing]);
+        });
+    });
+    return answer;
+}
+
 module.exports = {
     formatMoney,
-    getSkeleton
+    getSkeleton,
+    getPerms
 };

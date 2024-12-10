@@ -47,7 +47,6 @@ function fillInBlanks(dataArr, collapseN = 1) {
 };
 
 function fillInBlanksMinutely(dataArr, collapseN = 1) {
-
     dataArr.sort((a, b) => {
         if (a.time > b.time) {
             return 1;

@@ -7,6 +7,7 @@ const { fillInBlanks } = require("./helpers/fillInBlanks.js");
 const { createAnswers, createAnswersMulti } = require("./helpers/createAnswers.js");
 const { createPriceList, createPriceListMulti } = require("./helpers/createPriceList.js");
 const { runMulti } = require("./helpers/runMulti.js");
+const { formatMoney, getPerms } = require("./helpers/util.js");
 const {
     COSTdaily,  // 9668     0.0007
     AMZNdaily,  // 6923     0.00005 
@@ -92,7 +93,7 @@ const stocksToUse = [
     [AAPLdaily, "AAPL"],
     [MSFTdaily, "MSFT"],
     [BAdaily, "BA"],
-    [BYRNdaily, "BYRN"],
+    // [BYRNdaily, "BYRN"],
     [NFLXdaily, "NFLX"],
     [DISdaily, "DIS"],
     [IWMdaily, "IWM"],
@@ -129,258 +130,327 @@ const stocksToUse = [
     // // [BCDSdaily, "BCDS"],
     // // [PSYCdaily, "PSYC"],
 ];
-// reliable 1 day with regular stocks: minIncrease 0 minDir 1 minDirDir 1 lookBack 4 close dir vol dirDir train last 500
-const testLength = 220;
-const testSegFromEnd = 1;
-const dataCollapse = 1; // causes lots of errors - prices missing? no sure
-const numNets = 1;
-const retrainInterval = 1;
-const maxTrainLength = 500; // set to false to not use this at all
-const keepTrainLength = true;
-const tradeInterval = 1;
-const buyThreshold = 0.5;
-const bestFoundStart = 1;
-const minIncrease = 0;    // 0 means any increase
-const minDir = 1;           // 1 means any increase
-const minDirDir = 1;        // 1 means any increase
-const useFewestNegatives = false;
-const upFactor = 1;
-const buyTopNum = 1;
-const useSimpleNet = true;
-const answersWithSpread = false;
-const useForAnswer = "close";
-// const multiTrainingParams = false;
-const multiTrainingParams = [
-    {
-        // --- make sure these are in first set
-        useForAnswer: "close",
-        normalizeOutput: false,
-        sortByTime: false,
-        answersWithSpread: answersWithSpread,
-        // --- ^first set^ ---
-        lookBack: 4,
-        // numsToUse: {
-        //     "vol": ["dir"],
-        //     "high": ["dir"]
-        // },
+
+
+
+const bigTest = false;
+// ----------------------------- big test --------------------
+const perms = getPerms(5, [
+    [],
+    ["dir"],
+    ["dirDir"],
+    ["dir", "dirDir"]
+]);
+console.log(3, perms[201]);
+
+
+if (bigTest) {
+
+
+    const results = [];
+perms.forEach((perm, permIdx) => {
+    console.log("checking config " + permIdx + " / " + perms.length);
+    for (let n = 1; n < 4; n++) {
+        const constructParams = {
+            lookBack: n,
+            numsToUse: {
+                "close": perm[0],
+                "vol": perm[1],
+                "open": perm[2],
+                "high": perm[3],
+                "low": perm[4]
+            },
+            normalizeOutput: false,
+            startTraining: 0,
+            normalizeFactor: 1.5,
+            sortByTime: false,
+            answersWithSpread: false
+        }
+        results.push([`${n}-${permIdx}`, runDaily(constructParams)]);
+    }
+});
+let highs = [["", 0], ["", 0], ["", 0], ["", 0], ["", 0]];
+results.forEach((result) => {
+    if (result[1][1] > highs[highs.length - 1][1]) {
+        highs.push([result[0], result[1][1]]);
+        highs.sort((a, b) => {
+            if (a[1] > b[1]) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+        highs.shift();
+    }
+});
+console.log("----------------------");
+console.log("highs: " + highs);
+
+
+
+
+// ----------------------------^ big test ^-------------------
+} else {
+
+// ------------- main ----------
+const results = runDaily();
+console.log(results);
+// ----------- end main --------
+}
+
+
+function runDaily(useParams) {
+    // reliable 1 day with regular stocks: minIncrease 0 minDir 1 minDirDir 1 lookBack 4 close dir vol dirDir train last 500
+    const testLength = 220;
+    const testSegFromEnd = 1;
+    const dataCollapse = 1; // causes lots of errors - prices missing? no sure
+    const numNets = 1;
+    const retrainInterval = 1;
+    const maxTrainLength = 500; // set to false to not use this at all
+    const keepTrainLength = true;
+    const tradeInterval = 1;
+    const buyThreshold = 0.5;
+    const bestFoundStart = 1;
+    const minIncrease = 0;    // 0 means any increase
+    const minDir = 1;           // 1 means any increase
+    const minDirDir = 1;        // 1 means any increase
+    const useFewestNegatives = false;
+    const upFactor = 1;
+    const buyTopNum = 1;
+    const useSimpleNet = true;
+    const answersWithSpread = false;
+    const useForAnswer = "close";
+    const multiTrainingParams = false;
+    // const multiTrainingParams = [
+    //     {
+    //         // --- make sure these are in first set
+    //         useForAnswer: "close",
+    //         normalizeOutput: false,
+    //         sortByTime: false,
+    //         answersWithSpread: answersWithSpread,
+    //         // --- ^first set^ ---
+    //         lookBack: 3,
+    //         numsToUse: {
+    //             "close": ["dir", "dirDir"],
+    //             "vol": ["dir", "dirDir"]
+    //         },
+    //         normalizeOutput: false,
+    //         startTraining: 0,
+    //         normalizeFactor: 1.5
+    //     },
+    // ];
+    const defaultTrainingParams = useParams ? useParams : {
+        lookBack: 3,
         numsToUse: {
-            "close": ["dir"],
-            "vol": ["dirDir"]
+            "close": [],
+            "vol": ["dir", "dirDir"],
+            "open": [],
+            "high": ["dirDir"],
+            "low": ["dir"]
         },
         normalizeOutput: false,
         startTraining: 0,
-        normalizeFactor: 1.5
-    },
-];
-const defaultTrainingParams = {
-    lookBack: 5,
-    numsToUse: {
-        "close": ["dir"],
-        "vol": ["dirDir"],
-        // "open": ["dir"],
-        // "high": ["dir"],
-        // "low": ["dir"]
-    },
-    normalizeOutput: false,
-    startTraining: 0,
-    normalizeFactor: 1.5,
-    sortByTime: false,
-    answersWithSpread: answersWithSpread
-};
-const trainingParams = {
-    // COST: {
-    //     startTraining: 8000
-    // },
-    // AMZN: {
-    //     startTraining: 5000
-    // },
-    // GBTC: {
-    //     startTraining: 1000
-    // },
-    // QQQ: {
-    //     startTraining: 5000
-    // },
-    // RIVN: {
-    //     startTraining: 0
-    // },
-    // LUV: {
-    //     startTraining: 8000
-    // },
-    // ABNB: {
-    //     startTraining: 0
-    // },
-    // F: {
-    //     startTraining: 11000
-    // },
-    // META: {
-    //     startTraining: 1500
-    // },
-    // JBLU: {
-    //     startTraining: 3000
-    // },
-    // GOOG: {
-    //     startTraining: 3000
-    // },
-    // KO: {
-    //     startTraining: 13000
-    // },
-    // UPRO: {
-    //     startTraining: 2000
-    // },
-    // TQQQ: {
-    //     startTraining: 1500
-    // },
-    // GLD: {
-    //     startTraining: 3000
-    // }
-};
-// --- end params ---
-
-const syms = stocksToUse.map((pair) => {
-    return pair[1];
-});
-const dataToUse = {};
-syms.forEach((sym, i) => {
-    const rawData = stocksToUse[i][0];
-    rawData.sort((a, b) => {
-        const aDate = new Date(a.date);
-        const bDate = new Date(b.date);
-        if (aDate.getTime() > bDate.getTime()) {
-            return 1;
-        } else {
-            return -1;
-        }
-    });
-    dataToUse[sym] = fillInBlanks(rawData, dataCollapse);
-});
-
-const priceLists = {};
-const answerLists = {};
-syms.forEach((sym) => {
-    const answerParams = defaultTrainingParams;
-    if (trainingParams[sym]) {
-        Object.keys(trainingParams[sym]).forEach((key) => {
-            answerParams[key] = trainingParams[sym][key];
-        });
-    }
-    let paramsToUse = {
-        lookBack: answerParams.lookBack,
-        normalizeFactor: answerParams.normalizeFactor,
-        normalizeOutput: answerParams.normalizeOutput,
-        useForAnswer: useForAnswer,
-        sym: sym,
+        normalizeFactor: 1.5,
+        sortByTime: false,
         answersWithSpread: answersWithSpread
     };
-    if (multiTrainingParams) {
-        paramsToUse = multiTrainingParams;
-        multiTrainingParams.sym = sym;
-    }
-    if (multiTrainingParams) {
-        multiTrainingParams.forEach((paramSet) => {
+    const trainingParams = {
+        // COST: {
+        //     startTraining: 8000
+        // },
+        // AMZN: {
+        //     startTraining: 5000
+        // },
+        // GBTC: {
+        //     startTraining: 1000
+        // },
+        // QQQ: {
+        //     startTraining: 5000
+        // },
+        // RIVN: {
+        //     startTraining: 0
+        // },
+        // LUV: {
+        //     startTraining: 8000
+        // },
+        // ABNB: {
+        //     startTraining: 0
+        // },
+        // F: {
+        //     startTraining: 11000
+        // },
+        // META: {
+        //     startTraining: 1500
+        // },
+        // JBLU: {
+        //     startTraining: 3000
+        // },
+        // GOOG: {
+        //     startTraining: 3000
+        // },
+        // KO: {
+        //     startTraining: 13000
+        // },
+        // UPRO: {
+        //     startTraining: 2000
+        // },
+        // TQQQ: {
+        //     startTraining: 1500
+        // },
+        // GLD: {
+        //     startTraining: 3000
+        // }
+    };
+    // --- end params ---
+
+    const syms = stocksToUse.map((pair) => {
+        return pair[1];
+    });
+    const dataToUse = {};
+    syms.forEach((sym, i) => {
+        const rawData = stocksToUse[i][0];
+        rawData.sort((a, b) => {
+            const aDate = new Date(a.date);
+            const bDate = new Date(b.date);
+            if (aDate.getTime() > bDate.getTime()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+        dataToUse[sym] = fillInBlanks(rawData, dataCollapse);
+    });
+
+    const priceLists = {};
+    const answerLists = {};
+    syms.forEach((sym) => {
+        const answerParams = defaultTrainingParams;
+        if (trainingParams[sym]) {
+            Object.keys(trainingParams[sym]).forEach((key) => {
+                answerParams[key] = trainingParams[sym][key];
+            });
+        }
+        let paramsToUse = {
+            lookBack: answerParams.lookBack,
+            normalizeFactor: answerParams.normalizeFactor,
+            normalizeOutput: answerParams.normalizeOutput,
+            useForAnswer: useForAnswer,
+            sym: sym,
+            answersWithSpread: answersWithSpread
+        };
+        if (multiTrainingParams) {
+            paramsToUse = multiTrainingParams;
+            multiTrainingParams.sym = sym;
+        }
+        if (multiTrainingParams) {
+            multiTrainingParams.forEach((paramSet) => {
+                ["close", "vol", "open", "high", "low"].forEach((numType) => {
+                    if (paramSet.numsToUse[numType]) {
+                        paramSet[numType] = {
+                            useDiff: paramSet.numsToUse[numType].includes("diff"),
+                            normalizeDiff: paramSet.numsToUse[numType].includes("normalizeDiff"),
+                            useActual: paramSet.numsToUse[numType].includes("actual"),
+                            normalizeActual: paramSet.numsToUse[numType].includes("normalizeActual"),
+                            minimizeActual: paramSet.numsToUse[numType].includes("minimizeActual"),
+                            useDir: paramSet.numsToUse[numType].includes("dir"),
+                            useDirDir: paramSet.numsToUse[numType].includes("dirDir")
+                        }
+                    }
+                });
+            });
+        } else {
             ["close", "vol", "open", "high", "low"].forEach((numType) => {
-                if (paramSet.numsToUse[numType]) {
-                    paramSet[numType] = {
-                        useDiff: paramSet.numsToUse[numType].includes("diff"),
-                        normalizeDiff: paramSet.numsToUse[numType].includes("normalizeDiff"),
-                        useActual: paramSet.numsToUse[numType].includes("actual"),
-                        normalizeActual: paramSet.numsToUse[numType].includes("normalizeActual"),
-                        minimizeActual: paramSet.numsToUse[numType].includes("minimizeActual"),
-                        useDir: paramSet.numsToUse[numType].includes("dir"),
-                        useDirDir: paramSet.numsToUse[numType].includes("dirDir")
+                if (answerParams.numsToUse[numType]) {
+                    paramsToUse[numType] = {
+                        useDiff: answerParams.numsToUse[numType].includes("diff"),
+                        normalizeDiff: answerParams.numsToUse[numType].includes("normalizeDiff"),
+                        useActual: answerParams.numsToUse[numType].includes("actual"),
+                        normalizeActual: answerParams.numsToUse[numType].includes("normalizeActual"),
+                        minimizeActual: answerParams.numsToUse[numType].includes("minimizeActual"),
+                        useDir: answerParams.numsToUse[numType].includes("dir"),
+                        useDirDir: answerParams.numsToUse[numType].includes("dirDir")
                     }
                 }
             });
-        });
-    } else {
-        ["close", "vol", "open", "high", "low"].forEach((numType) => {
-            if (answerParams.numsToUse[numType]) {
-                paramsToUse[numType] = {
-                    useDiff: answerParams.numsToUse[numType].includes("diff"),
-                    normalizeDiff: answerParams.numsToUse[numType].includes("normalizeDiff"),
-                    useActual: answerParams.numsToUse[numType].includes("actual"),
-                    normalizeActual: answerParams.numsToUse[numType].includes("normalizeActual"),
-                    minimizeActual: answerParams.numsToUse[numType].includes("minimizeActual"),
-                    useDir: answerParams.numsToUse[numType].includes("dir"),
-                    useDirDir: answerParams.numsToUse[numType].includes("dirDir")
-                }
-            }
-        });
-    }
-    if (multiTrainingParams) {
-        answerLists[sym] = createAnswersMulti(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
-        priceLists[sym] = createPriceListMulti(dataToUse[sym], paramsToUse);
-    } else {
-        answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
-        priceLists[sym] = createPriceList(dataToUse[sym], paramsToUse);
-    }
-});
+        }
+        if (multiTrainingParams) {
+            answerLists[sym] = createAnswersMulti(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
+            priceLists[sym] = createPriceListMulti(dataToUse[sym], paramsToUse);
+        } else {
+            answerLists[sym] = createAnswers(dataToUse[sym], paramsToUse, false, minIncrease, minDir, minDirDir);
+            priceLists[sym] = createPriceList(dataToUse[sym], paramsToUse);
+        }
+    });
 
-// console.log(priceLists["ABEV"].slice(priceLists["ABEV"].length - 5, priceLists["ABEV"].length));
-// throw("fit");
+    // console.log(priceLists["ABEV"].slice(priceLists["ABEV"].length - 5, priceLists["ABEV"].length));
+    // throw("fit");
 
 
 
-// let n = 0;
-// dataToUse["COST"].forEach((entry) => {
-//     if (!entry.date) {
-//         n += 1;
-//     }
-// });
-// console.log(n);
-// throw("fit");
+    // let n = 0;
+    // dataToUse["COST"].forEach((entry) => {
+    //     if (!entry.date) {
+    //         n += 1;
+    //     }
+    // });
+    // console.log(n);
+    // throw("fit");
 
 
-// console.log(answerListsArr);
+    // console.log(answerListsArr);
 
-// const answerLists = combineAnswerLists(answerListsArr);
+    // const answerLists = combineAnswerLists(answerListsArr);
 
-// console.log(answerLists);
+    // console.log(answerLists);
 
-const trainingLists = {};
-const testAnswerLists = {};
-const testPriceLists = {};
-const nets = {};
+    const trainingLists = {};
+    const testAnswerLists = {};
+    const testPriceLists = {};
+    const nets = {};
 
-syms.forEach((sym) => {
-    let symParams = defaultTrainingParams;
-    if (trainingParams[sym]) {
-        symParams = trainingParams[sym];
-    }
-    const answerList = answerLists[sym];
-    const startTraining = symParams.startTraining;
-    const endTraining = answerList.length - (testLength * testSegFromEnd);
-    trainingLists[sym] = answerList.slice(startTraining, endTraining);
-    if (maxTrainLength && trainingLists[sym].length > maxTrainLength) {
-        trainingLists[sym] = trainingLists[sym].slice(trainingLists[sym].length - maxTrainLength, trainingLists[sym].length);
-    }
-    nets[sym] = new NetSet(numNets);
-    if (useSimpleNet) {
-        nets[sym] = new TallyNetSet(numNets, upFactor, {}, useFewestNegatives);
-    }
-    if (multiTrainingParams) {
-        nets[sym] = new TallyNetGroup(multiTrainingParams.length, upFactor, {}, useFewestNegatives);
-    }
-    nets[sym].train(trainingLists[sym]);
+    syms.forEach((sym) => {
+        let symParams = defaultTrainingParams;
+        if (trainingParams[sym]) {
+            symParams = trainingParams[sym];
+        }
+        const answerList = answerLists[sym];
+        const startTraining = symParams.startTraining;
+        const endTraining = answerList.length - (testLength * testSegFromEnd);
+        trainingLists[sym] = answerList.slice(startTraining, endTraining);
+        if (maxTrainLength && trainingLists[sym].length > maxTrainLength) {
+            trainingLists[sym] = trainingLists[sym].slice(trainingLists[sym].length - maxTrainLength, trainingLists[sym].length);
+        }
+        nets[sym] = new NetSet(numNets);
+        if (useSimpleNet) {
+            nets[sym] = new TallyNetSet(numNets, upFactor, {}, useFewestNegatives);
+        }
+        if (multiTrainingParams) {
+            nets[sym] = new TallyNetGroup(multiTrainingParams.length, upFactor, {}, useFewestNegatives);
+        }
+        nets[sym].train(trainingLists[sym]);
 
-    testAnswerLists[sym] = answerLists[sym].slice(endTraining, answerList.length - (testLength * (testSegFromEnd - 1)));
-    testPriceLists[sym] = priceLists[sym].slice(endTraining, answerList.length - (testLength * (testSegFromEnd - 1)));
-});
+        testAnswerLists[sym] = answerLists[sym].slice(endTraining, answerList.length - (testLength * (testSegFromEnd - 1)));
+        testPriceLists[sym] = priceLists[sym].slice(endTraining, answerList.length - (testLength * (testSegFromEnd - 1)));
+    });
 
-// syms.forEach((sym) => {
-//     console.log(sym);
-//     console.log(testPriceLists[sym]);
-// });
+    // syms.forEach((sym) => {
+    //     console.log(sym);
+    //     console.log(testPriceLists[sym]);
+    // });
 
-// console.log(testAnswerLists["AMZN"].slice(50, 55));
-// throw("fit");
+    // console.log(testAnswerLists["AMZN"].slice(50, 55));
+    // throw("fit");
 
-runMulti(testAnswerLists, testPriceLists, trainingLists, nets, {
-    retrainInterval: retrainInterval,
-    buyThreshold: buyThreshold,
-    useSimpleNet: useSimpleNet,
-    tradeInterval: tradeInterval,
-    bestFoundStart: bestFoundStart,
-    buyTopNum: buyTopNum,
-    keepTrainLength: keepTrainLength,
-    useFewestNegatives: useFewestNegatives
-});
+    return runMulti(testAnswerLists, testPriceLists, trainingLists, nets, {
+        retrainInterval: retrainInterval,
+        buyThreshold: buyThreshold,
+        useSimpleNet: useSimpleNet,
+        tradeInterval: tradeInterval,
+        bestFoundStart: bestFoundStart,
+        buyTopNum: buyTopNum,
+        keepTrainLength: keepTrainLength,
+        useFewestNegatives: useFewestNegatives
+    });
+}
+
+

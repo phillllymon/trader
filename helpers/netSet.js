@@ -108,16 +108,55 @@ class TallyNetSet {
 
         // RETURN CORRECT ANSWER
         // if (answerDiff > 0) {
-        //     return [1, 1000];
+        //     // return [1, 1000];
+        //     return [1, answerDiff];
         // } else {
         //     return [0];
         // }
         // END RETURN CORRECT
 
         // RETURN SPECIFIC
-        // if (!data.includes(0)) {
-        // // if (data[0] === 1 && data[1] === 1 && data[0] === 1) {
-        //     return [1, 1000];
+        // const str = data.join("-");
+        // if (this.table[str]) {
+        //     const tableArr = Object.keys(this.table).map((code) => {
+        //         return {
+        //             code: code,
+        //             up: this.table[code].up,
+        //             down: this.table[code].down
+        //         }
+        //     });
+        //     tableArr.sort((a, b) => {
+        //         let aRatio;
+        //         let bRatio;
+        //         if (a.down === 0) {
+        //             aRatio = 1000 * a.up;
+        //         } else {
+        //             aRatio = 1.0 * a.up / a.down;
+        //         }
+        //         if (b.down === 0) {
+        //             bRatio = 1000 * b.up;
+        //         } else {
+        //             bRatio = 1000 * b.down;
+        //         }
+        //         if (aRatio > bRatio) {
+        //             return 1;
+        //         } else {
+        //             return -1;
+        //         }
+        //     });
+        //     for (let i = 0; i < tableArr.length; i++) {
+        //         if (tableArr[i].code === str) {
+        //             if (i > 0.5 * tableArr.length) {
+        //                 let howSure = 1000;
+        //                 if (this.table[str].down > 0) {
+        //                     howSure = this.table[str].up / this.table[str].down;
+        //                 }
+        //                 return [1, howSure];
+        //             } else {
+        //                 return [0];
+        //             }
+        //         }
+        //     }
         // } else {
         //     return [0];
         // }
@@ -159,7 +198,7 @@ class TallyNetSet {
         this.noData += 1;
         // return [Math.random()];
         // return [1, -999];
-        return [0, 0];
+        return [0];
         // return [0];
     }
 

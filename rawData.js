@@ -1,4 +1,6 @@
 const COSTdaily = [
+    {date: "Dec 10, 2024", open: 989.73, high: 994.99, low: 985.88, close: 993.40, vol: 1409966},
+    {date: "Dec 9, 2024", open: 996.00, high: 997.01, low: 980.50, close: 987.86, vol: 1786481},
     {date: "Dec 6, 2024", open: 982.60, high: 997.71, low: 982.26, close: 992.61, vol: 1728117},
     {date: "Dec 5, 2024", open: 986.66, high: 990.13, low: 978.20, close: 982.26, vol: 1981304},
     {date: "Dec 4, 2024", open: 981.03, high: 991.10, low: 977.55, close: 990.92, vol: 1669988},
@@ -1264,6 +1266,8 @@ const COSTdaily = [
 ];
 
 const AMZNdaily = [
+    {date: "Dec 10, 2024", open: 226.09, high: 229.06, low: 224.20, close: 225.04, vol: 30610209},
+    {date: "Dec 9, 2024", open: 227.21, high: 230.08, low: 225.69, close: 226.09, vol: 46613632},
     {date: "Dec 6, 2024", open: 220.79, high: 227.13, low: 220.60, close: 227.03, vol: 43683979},
     {date: "Dec 5, 2024", open: 218.18, high: 222.15, low: 217.30, close: 220.55, vol: 38335521},
     {date: "Dec 4, 2024", open: 215.98, high: 219.99, low: 215.78, close: 218.16, vol: 48571780},
@@ -2529,6 +2533,8 @@ const AMZNdaily = [
 ];
 
 const GBTCdaily = [
+    {date: "Dec 10, 2024", open: 77.84, high: 78.10, low: 74.81, close: 76.56, vol: 4294610},
+    {date: "Dec 9, 2024", open: 78.67, high: 79.82, low: 76.23, close: 76.33, vol: 4154882},
     {date: "Dec 6, 2024", open: 78.94, high: 81.13, low: 78.37, close: 80.70, vol: 3963307},
     {date: "Dec 5, 2024", open: 81.70, high: 82.44, low: 77.72, close: 78.69, vol: 7025686},
     {date: "Dec 4, 2024", open: 76.10, high: 78.94, low: 75.17, close: 78.69, vol: 4870045},
@@ -3794,6 +3800,8 @@ const GBTCdaily = [
 ];
 
 const QQQdaily = [
+    {date: "Dec 10, 2024", open: 523.62, high: 525.38, low: 519.17, close: 520.60, vol: 23512531},
+    {date: "Dec 9, 2024", open: 525.52, high: 526.35, low: 521.22, close: 522.38, vol: 19266849},
     {date: "Dec 6, 2024", open: 522.51, high: 526.72, low: 522.35, close: 526.48, vol: 22901437},
     {date: "Dec 5, 2024", open: 523.35, high: 524.04, low: 521.42, close: 521.81, vol: 17077769},
     {date: "Dec 4, 2024", open: 520.31, high: 523.51, low: 519.62, close: 523.26, vol: 25798061},
@@ -5059,6 +5067,8 @@ const QQQdaily = [
 ];
 
 const RIVNdaily = [
+    {date: "Dec 10, 2024", open: 14.48, high: 14.51, low: 13.77, close: 14.06, vol: 35413020},
+    {date: "Dec 9, 2024", open: 13.50, high: 14.99, low: 13.42, close: 14.45, vol: 77001936},
     {date: "Dec 6, 2024", open: 12.61, high: 13.52, low: 12.50, close: 13.00, vol: 46609142},
     {date: "Dec 5, 2024", open: 12.09, high: 12.85, low: 12.05, close: 12.34, vol: 43515343},
     {date: "Dec 4, 2024", open: 11.83, high: 12.28, low: 11.71, close: 11.96, vol: 26659869},
@@ -5835,6 +5845,8 @@ const RIVNdaily = [
 ];
 
 const LUVdaily = [
+    {date: "Dec 10, 2024", open: 34.00, high: 34.19, low: 33.29, close: 33.44, vol: 5297205},
+    {date: "Dec 9, 2024", open: 34.40, high: 34.48, low: 33.81, close: 33.90, vol: 6914736},
     {date: "Dec 6, 2024", open: 35.20, high: 35.25, low: 34.06, close: 34.18, vol: 5931630},
     {date: "Dec 5, 2024", open: 35.46, high: 36.10, low: 34.40, close: 34.84, vol: 14061167},
     {date: "Dec 4, 2024", open: 33.20, high: 34.15, low: 33.08, close: 34.15, vol: 6918782},
@@ -7100,6 +7112,8 @@ const LUVdaily = [
 ];
 
 const ABNBdaily = [
+    {date: "Dec 10, 2024", open: 137.19, high: 139.89, low: 136.62, close: 138.30, vol: 4194326},
+    {date: "Dec 9, 2024", open: 136.91, high: 138.97, low: 136.59, close: 137.27, vol: 3613876},
     {date: "Dec 6, 2024", open: 137.75, high: 138.86, low: 136.56, close: 136.92, vol: 4152674},
     {date: "Dec 5, 2024", open: 139.10, high: 140.38, low: 135.51, close: 136.32, vol: 5140789},
     {date: "Dec 4, 2024", open: 136.69, high: 139.13, low: 134.85, close: 139.07, vol: 3472789},
@@ -8107,6 +8121,8 @@ const ABNBdaily = [
 ];
 
 const Fdaily = [
+    {date: "Dec 10, 2024", open: 10.72, high: 10.73, low: 10.55, close: 10.56, vol: 38621381},
+    {date: "Dec 9, 2024", open: 10.56, high: 10.80, low: 10.53, close: 10.60, vol: 49005795},
     {date: "Dec 6, 2024", open: 10.51, high: 10.60, low: 10.42, close: 10.51, vol: 45083278},
     {date: "Dec 5, 2024", open: 10.64, high: 10.69, low: 10.39, close: 10.44, vol: 63503388},
     {date: "Dec 4, 2024", open: 10.85, high: 10.87, low: 10.59, close: 10.74, vol: 61462663},
@@ -9372,6 +9388,8 @@ const Fdaily = [
 ];
 
 const METAdaily = [
+    {date: "Dec 10, 2024", open: 617.56, high: 625.59, low: 612.74, close: 619.32, vol: 10905447},
+    {date: "Dec 9, 2024", open: 623.99, high: 626.33, low: 606.17, close: 613.57, vol: 11408467},
     {date: "Dec 6, 2024", open: 610.10, high: 629.79, low: 608.53, close: 623.77, vol: 16945869},
     {date: "Dec 5, 2024", open: 617.08, high: 619.90, low: 607.05, close: 608.93, vol: 7807856},
     {date: "Dec 4, 2024", open: 611.88, high: 617.78, low: 605.10, close: 613.78, vol: 12843515},
@@ -10637,6 +10655,8 @@ const METAdaily = [
 ];
 
 const JBLUdaily = [
+    {date: "Dec 10, 2024", open: 6.87, high: 6.96, low: 6.67, close: 6.78, vol: 23198696},
+    {date: "Dec 9, 2024", open: 6.65, high: 6.94, low: 6.53, close: 6.82, vol: 20943616},
     {date: "Dec 6, 2024", open: 6.54, high: 6.82, low: 6.45, close: 6.59, vol: 18081152},
     {date: "Dec 5, 2024", open: 6.76, high: 6.80, low: 6.39, close: 6.42, vol: 22911603},
     {date: "Dec 4, 2024", open: 6.33, high: 6.89, low: 6.27, close: 6.56, vol: 38313010},

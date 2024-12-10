@@ -1,4 +1,6 @@
 const IWMdaily = [
+    {date: "Dec 10, 2024", open: 237.58, high: 238.82, low: 235.92, close: 236.80, vol: 18692262},
+    {date: "Dec 9, 2024", open: 240.55, high: 241.38, low: 237.65, close: 237.73, vol: 16025959},
     {date: "Dec 6, 2024", open: 239.79, high: 239.89, low: 238.39, close: 238.93, vol: 19284771},
     {date: "Dec 5, 2024", open: 240.52, high: 240.85, low: 237.74, close: 238.08, vol: 19581569},
     {date: "Dec 4, 2024", open: 240.28, high: 241.67, low: 239.21, close: 240.89, vol: 19786723},
@@ -1262,6 +1264,8 @@ const IWMdaily = [
     {date: "Dec 4, 2019", open: 160.50, high: 161.22, low: 160.30, close: 150.64, vol: 10833200},
 ];
 const SPYdaily = [
+    {date: "Dec 10, 2024", open: 605.37, high: 605.80, low: 602.14, close: 602.80, vol: 31151041},
+    {date: "Dec 9, 2024", open: 607.69, high: 607.86, low: 604.08, close: 604.68, vol: 32137875},
     {date: "Dec 6, 2024", open: 607.44, high: 609.06, low: 607.02, close: 607.81, vol: 25552239},
     {date: "Dec 5, 2024", open: 607.66, high: 608.48, low: 606.31, close: 606.66, vol: 27179446},
     {date: "Dec 4, 2024", open: 605.63, high: 607.91, low: 604.96, close: 607.66, vol: 40252398},
@@ -2525,6 +2529,8 @@ const SPYdaily = [
     {date: "Dec 4, 2019", open: 310.70, high: 312.12, low: 310.32, close: 288.32, vol: 49080000},
 ];
 const XLYdaily = [
+    {date: "Dec 10, 2024", open: 232.10, high: 234.60, low: 231.67, close: 232.44, vol: 3782376},
+    {date: "Dec 9, 2024", open: 234.14, high: 235.57, low: 231.24, close: 232.06, vol: 3249543},
     {date: "Dec 6, 2024", open: 229.86, high: 232.85, low: 229.90, close: 232.80, vol: 2434482},
     {date: "Dec 5, 2024", open: 226.37, high: 229.03, low: 226.27, close: 228.00, vol: 3312804},
     {date: "Dec 4, 2024", open: 224.55, high: 226.37, low: 224.32, close: 226.15, vol: 2769557},
@@ -3789,6 +3795,8 @@ const XLYdaily = [
 ];
 
 const NVDAdaily = [
+    {date: "Dec 10, 2024", open: 138.90, high: 141.82, low: 133.80, close: 135.07, vol: 207095403},
+    {date: "Dec 9, 2024", open: 138.99, high: 139.95, low: 137.13, close: 138.81, vol: 181048875},
     {date: "Dec 6, 2024", open: 144.63, high: 145.70, low: 141.31, close: 142.44, vol: 183587725},
     {date: "Dec 5, 2024", open: 145.12, high: 146.54, low: 143.95, close: 145.06, vol: 169582640},
     {date: "Dec 4, 2024", open: 142.02, high: 145.79, low: 140.29, close: 145.14, vol: 229451051},
